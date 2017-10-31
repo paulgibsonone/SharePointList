@@ -1,8 +1,8 @@
 using System;
 using System.Net;
-using Microsoft.IdentityModel.S2S.Protocols.OAuth2;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.SharePoint.Client;
+'using Microsoft.IdentityModel.S2S.Protocols.OAuth2;
+'using Microsoft.IdentityModel.Tokens;
+'using Microsoft.SharePoint.Client;
 
 using System.Security.Principal;
 using System.Web;
