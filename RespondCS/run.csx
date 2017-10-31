@@ -1,22 +1,32 @@
-using System;
+#r "Microsoft.WindowsAzure.Storage"
 using System.Net;
+using Microsoft.WindowsAzure.Storage.Table;
 
-public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceWriter log)
+public static async Task<HttpResponseMessage> 
+Run(HttpRequestMessage req,TraceWriter log,CloudTable objUserProfileTable)
 {
-    log.Info("C# HTTP trigger function processed a request.");
-
-    // parse query parameter
-    string name = req.GetQueryNameValuePairs()
-        .FirstOrDefault(q => string.Compare(q.Key, "name", true) == 0)
-        .Value;
-
-    // Get request body
     dynamic data = await req.Content.ReadAsAsync<object>();
+    string firstname=null,lastname=null;
+    firstname= data.firstname;
+    lastname= data.lastname;
 
-    // Set name to query string or body data
-    name = name ?? data?.name;
+    UserProfile objUserProfile = new UserProfile(firstname, lastname);
 
-    return name == null
-        ? req.CreateResponse(HttpStatusCode.BadRequest, "Please pass a name on the query string or in the request body")
-        : req.CreateResponse(HttpStatusCode.OK, "Hello " + name);
+    TableOperation objTblOperationInsert = TableOperation.Insert(objUserProfile);
+    objUserProfileTable.Execute(objTblOperationInsert);
+    return req.CreateResponse(HttpStatusCode.OK, "Thank you for Registering..");
+}
+
+public class UserProfile : TableEntity
+{
+    public UserProfile(string lastName, string firstName)
+    {
+        this.PartitionKey = "p1";
+        this.RowKey = Guid.NewGuid().ToString();
+        this.FirstName = firstName;
+        this.LastName = lastName;
+    }
+    public UserProfile() { }
+    public string FirstName { get;set; }
+    public string LastName  { get;set; }
 }
